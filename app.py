@@ -11,7 +11,12 @@ if uploaded_file:
 
     st.write("Loading file... ⏳")
 
-    df = pd.read_excel(uploaded_file, engine="openpyxl")
+    # Prevent NA/N/A from being treated as null
+    df = pd.read_excel(
+        uploaded_file,
+        engine="openpyxl",
+        keep_default_na=False
+    )
 
     st.write(f"Original columns count: {len(df.columns)}")
 
@@ -30,9 +35,16 @@ if uploaded_file:
             if col == "Material Code":
                 continue
 
-            missing = df[df[col].isna() | (df[col].astype(str).str.strip() == "")]
+            # Only treat truly blank cells as missing
+            missing = df[
+                df[col].astype(str).str.strip() == ""
+            ]
 
-            materials = missing["Material Code"].dropna().astype(str).unique()
+            materials = (
+                missing["Material Code"]
+                .astype(str)
+                .unique()
+            )
 
             result.append({
                 "Column Name": col,
@@ -45,11 +57,14 @@ if uploaded_file:
         st.success("✅ Processing complete!")
         st.dataframe(output_df)
 
-        # Download button
         output_file = "output.xlsx"
         output_df.to_excel(output_file, index=False)
 
         with open(output_file, "rb") as f:
-            st.download_button("📥 Download Output", f, file_name="output.xlsx")
+            st.download_button(
+                "📥 Download Output",
+                f,
+                file_name="output.xlsx"
+            )
 
     st.write("⏱ Time taken:", round(time.time() - start, 2), "seconds")
