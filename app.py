@@ -2,144 +2,218 @@ import streamlit as st
 import pandas as pd
 import time
 
-# --------------------------------------------------
-# Page Config
-# --------------------------------------------------
+# ==================================================
+# PAGE CONFIG
+# ==================================================
+
 st.set_page_config(
     page_title="Missing Values Checker",
     page_icon="✅",
     layout="wide"
 )
 
-# --------------------------------------------------
-# Custom CSS
-# --------------------------------------------------
+# ==================================================
+# CUSTOM CSS
+# ==================================================
+
 st.markdown("""
 <style>
 
 /* Main Background */
 .stApp {
-    background: linear-gradient(135deg, #0f172a, #1e293b);
+    background: linear-gradient(
+        135deg,
+        #020617 0%,
+        #0f172a 50%,
+        #1e293b 100%
+    );
 }
+
+/* Hide Streamlit Menu */
+#MainMenu {visibility: hidden;}
+footer {visibility: hidden;}
+header {visibility: hidden;}
 
 /* Main Title */
-.main-title {
-    text-align: center;
-    font-size: 60px;
-    font-weight: bold;
-    color: white;
-    margin-top: 20px;
+.main-title{
+    font-size:70px;
+    font-weight:900;
+    text-align:center;
+
+    background: linear-gradient(
+        90deg,
+        #38bdf8,
+        #67e8f9,
+        #ffffff
+    );
+
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+
+    margin-top:20px;
 }
 
-.sub-title {
-    text-align: center;
-    color: #d1d5db;
-    font-size: 18px;
-    margin-bottom: 30px;
+/* Subtitle */
+.sub-title{
+    text-align:center;
+    color:#cbd5e1;
+    font-size:20px;
+    margin-bottom:30px;
 }
 
-/* Upload Section */
-.upload-container {
-    border: 2px dashed #6b7280;
-    border-radius: 15px;
-    padding: 25px;
-    background-color: rgba(255,255,255,0.05);
+/* Glass Card */
+.glass-card{
+    background:rgba(255,255,255,0.05);
+    backdrop-filter:blur(15px);
+    border:1px solid rgba(255,255,255,0.1);
+    border-radius:20px;
+    padding:25px;
+    margin-bottom:20px;
+    box-shadow:0px 8px 32px rgba(0,0,0,0.3);
+}
+
+/* Metrics */
+.metric-box{
+    background:linear-gradient(
+        135deg,
+        rgba(56,189,248,0.20),
+        rgba(255,255,255,0.05)
+    );
+
+    border-radius:15px;
+    padding:20px;
+    text-align:center;
+    border:1px solid rgba(255,255,255,0.1);
 }
 
 /* Sidebar */
-section[data-testid="stSidebar"] {
-    background-color: #111827;
+section[data-testid="stSidebar"]{
+    background:#050b18;
 }
 
-/* Cards */
-.card {
-    background-color: rgba(255,255,255,0.05);
-    border-radius: 15px;
-    padding: 20px;
-    color: white;
+section[data-testid="stSidebar"] *{
+    color:white;
 }
 
-.small-card {
-    background-color: rgba(255,255,255,0.08);
-    border-radius: 15px;
-    padding: 15px;
-    text-align: center;
-    color: white;
+/* Upload Container */
+.upload-box{
+    border:2px dashed #38bdf8;
+    border-radius:20px;
+    padding:20px;
 }
 
+/* Success Message */
+.success-box{
+    color:#22c55e;
+    font-weight:bold;
+    text-align:center;
+    font-size:20px;
+}
+
+/* Dataframe */
+[data-testid="stDataFrame"]{
+    border-radius:15px;
+}
+
+/* Download Button */
+.stDownloadButton > button{
+    width:100%;
+    background:linear-gradient(
+        90deg,
+        #06b6d4,
+        #3b82f6
+    );
+
+    color:white;
+    border:none;
+    border-radius:10px;
+    font-weight:bold;
+    height:50px;
+}
 </style>
 """, unsafe_allow_html=True)
 
-# --------------------------------------------------
-# Sidebar Instructions
-# --------------------------------------------------
+# ==================================================
+# SIDEBAR
+# ==================================================
+
 with st.sidebar:
 
-    st.markdown("## 📘 User Instructions")
+    st.title("✅ Missing Values Checker")
+
+    st.markdown("---")
 
     st.markdown("""
-### 1. Upload File
-- Upload Excel (.xlsx) file only
-- Maximum recommended size: 200 MB
-- Ensure data contains **Material Code** column
+### 📘 User Instructions
 
-### 2. Validation Process
-- Detects blank values only
-- Ignores NA/N/A text values
+#### Upload Guidelines
+- Upload Excel (.xlsx) file only
+- Material Code column is mandatory
+- Single worksheet recommended
+
+#### Validation Process
+- Detects blank cells only
+- Keeps values like N/A, NA as text
 - Removes empty columns automatically
 
-### 3. Download Results
-- Missing values reported by column
-- Displays affected Material Codes
-- Download processed Excel report
+#### Output
+- Shows missing values by column
+- Lists affected Material Codes
+- Download Excel report
 
-### 4. Benefits
-- Faster data quality checks
-- Easy identification of missing data
-- Ready-to-share output report
+#### Benefits
+- Faster data validation
+- Better data quality checks
+- Instant downloadable output
 """)
 
-# --------------------------------------------------
-# Header
-# --------------------------------------------------
-st.markdown(
-    """
-    <div class='main-title'>
-        ✅ Missing Values Checker
-    </div>
-    """,
-    unsafe_allow_html=True
-)
+    st.markdown("---")
+    st.success("✅ Ready to Process")
 
-st.markdown(
-    """
-    <div class='sub-title'>
-        Upload an Excel file and identify missing values by Material Code
-    </div>
-    """,
-    unsafe_allow_html=True
-)
+# ==================================================
+# HEADER
+# ==================================================
 
-# --------------------------------------------------
-# Upload Area
-# --------------------------------------------------
-st.markdown("<div class='upload-container'>", unsafe_allow_html=True)
+st.markdown("""
+<div class="main-title">
+    Missing Values Checker
+</div>
+
+<div class="sub-title">
+    Smart Excel Validation Tool for Missing Data Analysis
+</div>
+""", unsafe_allow_html=True)
+
+# ==================================================
+# UPLOAD AREA
+# ==================================================
+
+st.markdown("""
+<div class="glass-card">
+    <h3 style="text-align:center;color:white;">
+        📂 Upload Excel File
+    </h3>
+
+    <p style="text-align:center;color:#cbd5e1;">
+        Upload your workbook and identify missing values instantly.
+    </p>
+</div>
+""", unsafe_allow_html=True)
 
 uploaded_file = st.file_uploader(
-    "📂 Upload Excel File",
+    "",
     type=["xlsx"]
 )
 
-st.markdown("</div>", unsafe_allow_html=True)
+# ==================================================
+# PROCESS FILE
+# ==================================================
 
-# --------------------------------------------------
-# Processing Logic
-# --------------------------------------------------
 if uploaded_file:
 
     start_time = time.time()
 
-    with st.spinner("Processing file..."):
+    with st.spinner("Reading Excel File..."):
 
         df = pd.read_excel(
             uploaded_file,
@@ -149,46 +223,91 @@ if uploaded_file:
 
         original_cols = len(df.columns)
 
-        # Remove empty columns
         df = df.dropna(axis=1, how="all")
 
-        # Remove unwanted auto-generated columns
-        df = df.loc[:, ~df.columns.astype(str).str.startswith("Column")]
+        df = df.loc[
+            :,
+            ~df.columns.astype(str).str.startswith("Column")
+        ]
 
         cleaned_cols = len(df.columns)
 
-    col1, col2 = st.columns(2)
+    # ==============================================
+    # METRICS
+    # ==============================================
 
-    with col1:
-        st.metric(
-            label="Original Columns",
-            value=original_cols
+    c1, c2, c3 = st.columns(3)
+
+    with c1:
+        st.markdown(
+            f"""
+            <div class="metric-box">
+                <h4 style="color:white;">
+                    📋 Original Columns
+                </h4>
+                <h1 style="color:white;">
+                    {original_cols}
+                </h1>
+            </div>
+            """,
+            unsafe_allow_html=True
         )
 
-    with col2:
-        st.metric(
-            label="Clean Columns",
-            value=cleaned_cols
+    with c2:
+        st.markdown(
+            f"""
+            <div class="metric-box">
+                <h4 style="color:white;">
+                    ✅ Clean Columns
+                </h4>
+                <h1 style="color:white;">
+                    {cleaned_cols}
+                </h1>
+            </div>
+            """,
+            unsafe_allow_html=True
         )
+
+    with c3:
+        st.markdown(
+            """
+            <div class="metric-box">
+                <h4 style="color:white;">
+                    🔍 Status
+                </h4>
+                <h1 style="color:#22c55e;">
+                    Ready
+                </h1>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    # ==============================================
+    # VALIDATION
+    # ==============================================
 
     if "Material Code" not in df.columns:
 
-        st.error("❌ 'Material Code' column not found.")
+        st.error("❌ 'Material Code' column not found in Excel.")
 
     else:
 
+        progress_bar = st.progress(0)
+
         result = []
 
-        progress = st.progress(0)
-
-        cols_to_check = [
-            c for c in df.columns
-            if c != "Material Code"
+        check_columns = [
+            col
+            for col in df.columns
+            if col != "Material Code"
         ]
 
-        total_cols = len(cols_to_check)
+        total_columns = len(check_columns)
 
-        for i, col in enumerate(cols_to_check):
+        for index, col in enumerate(check_columns):
 
             missing = df[
                 df[col]
@@ -209,20 +328,53 @@ if uploaded_file:
                 "Unique Count": len(materials)
             })
 
-            progress.progress((i + 1) / total_cols)
+            progress_bar.progress(
+                (index + 1) / total_columns
+            )
 
         output_df = pd.DataFrame(result)
 
-        st.success("✅ Processing Complete")
+        st.success("✅ Processing Completed Successfully")
 
-        st.subheader("Results")
+        # ==========================================
+        # SUMMARY
+        # ==========================================
+
+        total_missing_columns = output_df[
+            output_df["Unique Count"] > 0
+        ].shape[0]
+
+        s1, s2, s3 = st.columns(3)
+
+        s1.metric(
+            "Columns Checked",
+            len(output_df)
+        )
+
+        s2.metric(
+            "Columns with Missing Data",
+            total_missing_columns
+        )
+
+        s3.metric(
+            "Processing Time",
+            f"{round(time.time()-start_time,2)} sec"
+        )
+
+        st.markdown("---")
+
+        st.subheader("📊 Missing Values Analysis")
 
         st.dataframe(
             output_df,
-            use_container_width=True
+            use_container_width=True,
+            height=500
         )
 
-        # Save Output
+        # ==========================================
+        # EXPORT
+        # ==========================================
+
         output_file = "missing_values_output.xlsx"
 
         output_df.to_excel(
@@ -230,37 +382,34 @@ if uploaded_file:
             index=False
         )
 
-        # Download Button
         with open(output_file, "rb") as file:
 
             st.download_button(
-                label="📥 Download Output File",
+                label="📥 Download Analysis Report",
                 data=file,
                 file_name="missing_values_output.xlsx",
                 mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
             )
 
+        st.markdown("<br>", unsafe_allow_html=True)
+
         st.info(
-            f"⏱ Processing Time: {round(time.time() - start_time, 2)} seconds"
+            f"⏱ Total Processing Time: {round(time.time()-start_time,2)} seconds"
         )
 
-        # Summary
-        st.subheader("Summary")
+# ==================================================
+# FOOTER
+# ==================================================
 
-        total_missing = output_df[
-            output_df["Unique Count"] > 0
-        ].shape[0]
+st.markdown("""
+<br><br>
 
-        col1, col2 = st.columns(2)
+<hr>
 
-        with col1:
-            st.metric(
-                "Columns With Missing Data",
-                total_missing
-            )
-
-        with col2:
-            st.metric(
-                "Total Checked Columns",
-                len(output_df)
-            )
+<p style="
+text-align:center;
+color:#94a3b8;
+font-size:14px;">
+Missing Values Checker © 2026 | Data Quality Validation Tool
+</p>
+""", unsafe_allow_html=True)
