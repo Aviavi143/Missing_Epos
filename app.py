@@ -36,9 +36,9 @@ header {visibility: hidden;}
 
 /* Main Title */
 .main-title{
-    font-size:70px;
+    font-size:60px;
     font-weight:900;
-    text-align:center;
+
     background: linear-gradient(
         90deg,
         #38bdf8,
@@ -50,14 +50,16 @@ header {visibility: hidden;}
     -webkit-text-fill-color:transparent;
 
     margin-top:20px;
+    margin-bottom:10px;
 }
 
 /* Subtitle */
 .sub-title{
-    text-align:center;
-    color:#cbd5e1;
-    font-size:20px;
-    margin-bottom:30px;
+2
+color:#cbd5e1;
+3
+font-size:18px;
+4
 }
 
 /* Glass Card */
@@ -163,18 +165,29 @@ with st.sidebar:
     st.success("✅ Ready to Process")
 
 # ==================================================
-# HEADER
+# HEADER WITH PENTLAND LOGO
 # ==================================================
 
-st.markdown("""
-<div class="main-title">
-    Missing Values Checker
-</div>
+col1, col2 = st.columns([5, 1])
 
-<div class="sub-title">
-    Smart Excel Validation Tool for Missing Data Analysis
-</div>
-""", unsafe_allow_html=True)
+with col1:
+
+    st.markdown("""
+    <div class="main-title">
+        Missing Values Checker
+    </div>
+
+    <div class="sub-title">
+        Smart Excel Validation Tool for Missing Data Analysis
+    </div>
+    """, unsafe_allow_html=True)
+
+with col2:
+
+    st.image(
+        "https://pbs.twimg.com/media/GyJLJ06W4AAQRrN?format=png&name=large",
+        width=180
+    )
 
 # ==================================================
 # UPLOAD SECTION
