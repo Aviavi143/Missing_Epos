@@ -39,7 +39,6 @@ header {visibility: hidden;}
     font-size:70px;
     font-weight:900;
     text-align:center;
-
     background: linear-gradient(
         90deg,
         #38bdf8,
@@ -95,24 +94,11 @@ section[data-testid="stSidebar"] *{
     color:white;
 }
 
-/* Upload Container */
-.upload-box{
-    border:2px dashed #38bdf8;
-    border-radius:20px;
-    padding:20px;
-}
-
-/* Success Message */
-.success-box{
-    color:#22c55e;
-    font-weight:bold;
-    text-align:center;
-    font-size:20px;
-}
-
-/* Dataframe */
-[data-testid="stDataFrame"]{
+/* Upload Area */
+.stFileUploader{
+    background: rgba(255,255,255,0.04);
     border-radius:15px;
+    padding:15px;
 }
 
 /* Download Button */
@@ -124,12 +110,18 @@ section[data-testid="stSidebar"] *{
         #3b82f6
     );
 
-    color:white;
+    color:white !important;
     border:none;
     border-radius:10px;
     font-weight:bold;
     height:50px;
 }
+
+/* Dataframe */
+[data-testid="stDataFrame"]{
+    border-radius:15px;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -153,7 +145,7 @@ with st.sidebar:
 
 #### Validation Process
 - Detects blank cells only
-- Keeps values like N/A, NA as text
+- Keeps values like N/A and NA as text
 - Removes empty columns automatically
 
 #### Output
@@ -185,23 +177,19 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # ==================================================
-# UPLOAD AREA
+# UPLOAD SECTION
 # ==================================================
 
 st.markdown("""
 <div class="glass-card">
-    <h3 style="text-align:center;color:white;">
+    <h2 style="text-align:center;color:white;">
         📂 Upload Excel File
-    </h3>
-
-    <p style="text-align:center;color:#cbd5e1;">
-        Upload your workbook and identify missing values instantly.
-    </p>
+    </h2>
 </div>
 """, unsafe_allow_html=True)
 
 uploaded_file = st.file_uploader(
-    "",
+    "Select an Excel file",
     type=["xlsx"]
 )
 
@@ -232,62 +220,41 @@ if uploaded_file:
 
         cleaned_cols = len(df.columns)
 
-    # ==============================================
+    # ==================================================
     # METRICS
-    # ==============================================
+    # ==================================================
 
     c1, c2, c3 = st.columns(3)
 
     with c1:
-        st.markdown(
-            f"""
-            <div class="metric-box">
-                <h4 style="color:white;">
-                    📋 Original Columns
-                </h4>
-                <h1 style="color:white;">
-                    {original_cols}
-                </h1>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
+        st.markdown(f"""
+        <div class="metric-box">
+            <h4 style="color:white;">📋 Original Columns</h4>
+            <h1 style="color:white;">{original_cols}</h1>
+        </div>
+        """, unsafe_allow_html=True)
 
     with c2:
-        st.markdown(
-            f"""
-            <div class="metric-box">
-                <h4 style="color:white;">
-                    ✅ Clean Columns
-                </h4>
-                <h1 style="color:white;">
-                    {cleaned_cols}
-                </h1>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
+        st.markdown(f"""
+        <div class="metric-box">
+            <h4 style="color:white;">✅ Clean Columns</h4>
+            <h1 style="color:white;">{cleaned_cols}</h1>
+        </div>
+        """, unsafe_allow_html=True)
 
     with c3:
-        st.markdown(
-            """
-            <div class="metric-box">
-                <h4 style="color:white;">
-                    🔍 Status
-                </h4>
-                <h1 style="color:#22c55e;">
-                    Ready
-                </h1>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
+        st.markdown("""
+        <div class="metric-box">
+            <h4 style="color:white;">🔍 Status</h4>
+            <h1 style="color:#22c55e;">Ready</h1>
+        </div>
+        """, unsafe_allow_html=True)
 
     st.markdown("<br>", unsafe_allow_html=True)
 
-    # ==============================================
-    # VALIDATION
-    # ==============================================
+    # ==================================================
+    # CHECK COLUMN
+    # ==================================================
 
     if "Material Code" not in df.columns:
 
@@ -336,9 +303,9 @@ if uploaded_file:
 
         st.success("✅ Processing Completed Successfully")
 
-        # ==========================================
+        # ==================================================
         # SUMMARY
-        # ==========================================
+        # ==================================================
 
         total_missing_columns = output_df[
             output_df["Unique Count"] > 0
@@ -371,9 +338,9 @@ if uploaded_file:
             height=500
         )
 
-        # ==========================================
+        # ==================================================
         # EXPORT
-        # ==========================================
+        # ==================================================
 
         output_file = "missing_values_output.xlsx"
 
@@ -391,8 +358,6 @@ if uploaded_file:
                 mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
             )
 
-        st.markdown("<br>", unsafe_allow_html=True)
-
         st.info(
             f"⏱ Total Processing Time: {round(time.time()-start_time,2)} seconds"
         )
@@ -403,9 +368,7 @@ if uploaded_file:
 
 st.markdown("""
 <br><br>
-
 <hr>
-
 <p style="
 text-align:center;
 color:#94a3b8;
